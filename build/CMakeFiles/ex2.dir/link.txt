@@ -1,0 +1,1 @@
+/data/data/com.termux/files/usr/bin/c++ -O2 -g -DNDEBUG -Xlinker --dependency-file=CMakeFiles/ex2.dir/link.d CMakeFiles/ex2.dir/examples/example_lifecycle.cpp.o -o ex2
