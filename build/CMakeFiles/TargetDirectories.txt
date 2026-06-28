@@ -1,6 +1,0 @@
-/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build/CMakeFiles/tests.dir
-/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build/CMakeFiles/benchmarks.dir
-/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build/CMakeFiles/ex1.dir
-/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build/CMakeFiles/ex2.dir
-/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build/CMakeFiles/edit_cache.dir
-/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build/CMakeFiles/rebuild_cache.dir
