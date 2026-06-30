@@ -1,6 +1,6 @@
 # PoolAllocator
 
-[![C++26](https://img.shields.io/badge/C%2B%2B-26-blue)](https://en.cppreference.com/w/cpp/26)
+[![C++23](https://img.shields.io/badge/C%2B%2B-23-blue)](https://en.cppreference.com/w/cpp/23)
 [![Status](https://img.shields.io/badge/status-learning%20project-green)](https://github.com/privateMwb/PoolAllocator)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -69,6 +69,7 @@ This project was built to understand:
 - `[[no_unique_address]]` on stats storage — no size penalty when stats are off
 - Move semantics with deleted copy
 - `std::constructible_from` concept constraint on `create<T>()`
+- Precondition contracts (`AP_PRE`) and purity annotations (`AP_PURE`) via `Contract.h`
 
 ---
 
@@ -208,7 +209,7 @@ Pool<true>  debug{64, 128};       // stats enabled
 ### Basic Allocation
 
 ```cpp
-#include "Pool.h"
+#include <PoolPro/Pool.h>
 
 using namespace AllocatorPro;
 
@@ -226,7 +227,7 @@ int main() {
 ### Object Lifecycle
 
 ```cpp
-#include "Pool.h"
+#include <PoolPro/Pool.h>
 
 using namespace AllocatorPro;
 
@@ -250,7 +251,7 @@ int main() {
 ### Batch Allocation
 
 ```cpp
-#include "Pool.h"
+#include <PoolPro/Pool.h>
 
 using namespace AllocatorPro;
 
@@ -266,7 +267,7 @@ int main() {
 ### Debug Statistics
 
 ```cpp
-#include "Pool.h"
+#include <PoolPro/Pool.h>
 
 using namespace AllocatorPro;
 
@@ -316,7 +317,7 @@ requires std::constructible_from<T, Args...>
 [[nodiscard]] T* create(Args&&... args);
 
 template<typename T>
-void destroy(T* ptr) noexcept(noexcept(ptr->~T()));
+void destroy(T* ptr) noexcept;
 ```
 
 ### Pool Management
@@ -328,15 +329,15 @@ void reset() noexcept;
 ### Introspection
 
 ```cpp
-[[nodiscard]] AP_PURE bool owns(const void* ptr) const noexcept;
+[[nodiscard]] bool owns(const void* ptr) const noexcept;
 
 [[nodiscard]] const Stats& getStats() const noexcept requires EnableStats;
 
-[[nodiscard]] AP_PURE std::size_t capacity()    const noexcept;
-[[nodiscard]] AP_PURE std::size_t usedBlocks()  const noexcept;
-[[nodiscard]] AP_PURE std::size_t freeBlocks()  const noexcept;
-[[nodiscard]] AP_PURE std::size_t totalBlocks() const noexcept;
-[[nodiscard]] AP_PURE std::size_t blockStride() const noexcept;
+[[nodiscard]] std::size_t capacity()    const noexcept;
+[[nodiscard]] std::size_t usedBlocks()  const noexcept;
+[[nodiscard]] std::size_t freeBlocks()  const noexcept;
+[[nodiscard]] std::size_t totalBlocks() const noexcept;
+[[nodiscard]] std::size_t blockStride() const noexcept;
 ```
 
 ---
@@ -490,11 +491,14 @@ PoolAllocator/
 ├── tests/
 ├── benchmarks/
 ├── examples/
+│
 ├── cmake/
+│   └── PoolProConfig.cmake.in
+│
+├── .gitignore
 ├── CMakeLists.txt
 ├── README.md
-├── LICENSE
-└── .gitignore
+└── LICENSE
 ```
 
 ---
@@ -538,11 +542,13 @@ cmake --build .
 
 ## Notes
 
-- Blocks must be at least `sizeof(void*)` bytes — enforced via `assert` in debug builds.
+- Blocks must be at least `sizeof(void*)` bytes — enforced via `AP_PRE` contract in `Pool.tpp`.
 - `reset()` does not call destructors. Caller is responsible for destroying live objects before reset.
+- `reset()` clears all statistics, including `peakUsed_`, when `EnableStats = true`.
 - Double-free is undefined behaviour. `deallocate()` rejects foreign pointers via `owns()` but does not detect double-free of valid blocks.
 - `getStats()` is only callable on `Pool<true>` — calling it on `Pool<false>` is a compile error.
-- `create<T>()` asserts at runtime that `sizeof(T) <= blockSize_` and `alignof(T) <= alignment_`.
+- `create<T>()` enforces via `AP_PRE` that `sizeof(T) <= blockSize_` and `alignof(T) <= alignment_`.
+- `owns()` and the introspection accessors are annotated `AP_PURE` for compiler optimization hints.
 
 ---
 
