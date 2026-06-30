@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

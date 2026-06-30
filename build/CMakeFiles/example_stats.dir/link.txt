@@ -1,1 +1,0 @@
-/data/data/com.termux/files/usr/bin/c++ -O2 -g -DNDEBUG -Xlinker --dependency-file=CMakeFiles/example_stats.dir/link.d CMakeFiles/example_stats.dir/examples/example_stats.cpp.o -o example_stats
