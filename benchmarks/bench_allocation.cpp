@@ -1,17 +1,16 @@
-// Bench Allocation 
-// Measures the cost of single block allocation and deallocation
+// Bench Allocation
+// Measures the cost of pool allocation and deallocation
 // against equivalent heap allocation and deallocation.
 //
 // Covers:
-// - single allocate/deallocate vs heap new/delete
-// - full alloc/dealloc cycle vs heap new/delete cycle
+// - Single allocate/deallocate vs heap new/delete
+// - Full allocation/deallocation cycle vs heap new/delete cycle
 
 #include "bench_helper.h"
 
 using namespace AllocatorPro;
 
-// Allocate
-// measures single pool allocation/deallocation vs heap new/delete
+// Measures the cost of a single pool allocation and deallocation versus heap new/delete.
 static void bench_allocate() {
     Pool pool{sizeof(Block), 16};
 
@@ -32,8 +31,7 @@ static void bench_allocate() {
     BENCH("heap_allocate", LARGE, heap_allocate);
 }
 
-// Alloc Dealloc Cycle
-// measures repeated full cycle vs heap new/delete cycle
+// Measures the cost of repeated allocation and deallocation cycles versus heap new/delete.
 static void bench_alloc_dealloc_cycle() {
     Pool pool{sizeof(Block), 16};
 
@@ -58,7 +56,6 @@ static void bench_alloc_dealloc_cycle() {
     BENCH("heap_alloc_dealloc_cycle", LARGE, heap_cycle);
 }
 
-// Benchmark Runner
 // Executes all allocation benchmark cases.
 void run_allocation_benchmarks() {
     setHeader("Allocation Benchmarks");

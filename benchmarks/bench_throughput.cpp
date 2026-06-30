@@ -1,10 +1,9 @@
 // Bench Throughput
-// Measures sustained allocation throughput under realistic usage patterns.
-// Compares pool allocator against heap for fill/drain cycles.
+// Measures sustained allocation throughput under realistic allocation patterns.
 //
 // Covers:
-// - fill pool then drain vs heap equivalent
-// - interleaved alloc/dealloc vs heap equivalent
+// - fill-and-drain allocation cycles vs heap equivalent
+// - interleaved allocation/deallocation vs heap equivalent
 
 #include "bench_helper.h"
 
@@ -12,8 +11,7 @@ using namespace AllocatorPro;
 
 static constexpr std::size_t kThroughputPoolSize = 256;
 
-// Fill Drain
-// measures repeated fill-then-drain cycle vs heap equivalent
+// Measures sustained throughput when repeatedly filling and draining the pool.
 static void bench_fill_drain() {
     Pool pool{sizeof(Block), kThroughputPoolSize};
     void* blocks[kThroughputPoolSize]{};
@@ -37,8 +35,7 @@ static void bench_fill_drain() {
     BENCH("heap_fill_drain", LARGE, heap_fill_drain);
 }
 
-// Interleaved
-// measures interleaved alloc/dealloc vs heap equivalent
+// Measures sustained throughput under alternating allocation and deallocation.
 static void bench_interleaved() {
     Pool pool{sizeof(Block), kThroughputPoolSize};
 
@@ -59,6 +56,7 @@ static void bench_interleaved() {
     BENCH("heap_interleaved", LARGE, heap_interleaved);
 }
 
+// Executes all throughput benchmark cases.
 void run_throughput_benchmarks() {
     setHeader("Throughput Benchmarks");
 

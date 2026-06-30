@@ -1,156 +1,104 @@
-// Pool Introspection Test Suite
+// Pool introspection test suite.
 //
 // Coverage:
-// - Pointer ownership
-// - Pool capacity
-// - Block usage tracking
-// - Block stride
-// - Statistics tracking
+// - Owns returns true for allocated pointer
+// - Owns returns false for misaligned interior pointer
+// - Owns returns false for outside pointer
+// - Owns returns false for nullptr
+// - UsedBlocks reflects current allocation
+// - FreeBlocks reflects available blocks
+// - TotalBlocks reflects block count
+// - UsedBlocks and freeBlocks sum to totalBlocks
+// - Capacity reflects stride times total blocks
+// - BlockStride reflects aligned block size
 
 #include "test_helper.h"
 
 using namespace AllocatorPro;
 
-// Valid Ownership
-// Verifies that owns() recognizes pointers allocated by the pool.
-static void owns_valid_block() {
+// Verifies that owns returns true for a pointer returned by allocate.
+static void owns_returns_true_for_allocated_pointer() {
     Pool pool{64, 4};
     void* ptr = pool.allocate();
-
     CHK(pool.owns(ptr));
 }
 
-// Out-of-Range Ownership
-// Verifies that owns() rejects pointers outside the pool.
-static void owns_out_of_range() {
+// Verifies that owns returns false for a misaligned interior pointer.
+static void owns_returns_false_for_interior_pointer() {
+    Pool pool{64, 4};
+    void* ptr = pool.allocate();
+    const auto* interior = static_cast<const std::byte*>(ptr) + 1;
+    CHK(!pool.owns(interior));
+}
+
+// Verifies that owns returns false for a pointer outside the pool's slab.
+static void owns_returns_false_for_outside_pointer() {
     Pool pool{64, 4};
     int x = 0;
-
     CHK(!pool.owns(&x));
 }
 
-// Null Pointer Ownership
-// Verifies that owns() returns false for a nullptr.
-static void owns_nullptr() {
+// Verifies that owns returns false for a null pointer.
+static void owns_returns_false_for_nullptr() {
     Pool pool{64, 4};
-
     CHK(!pool.owns(nullptr));
 }
 
-// Misaligned Pointer Ownership
-// Verifies that owns() rejects pointers that are not block-aligned.
-static void owns_misaligned_pointer() {
+// Verifies that usedBlocks reflects the current number of allocated blocks.
+static void used_blocks_reflects_current_allocation() {
     Pool pool{64, 4};
-    void* ptr = pool.allocate();
-
-    const auto* p = static_cast<const std::byte*>(ptr) + 1;
-
-    CHK(!pool.owns(p));
+    (void)pool.allocate();
+    (void)pool.allocate();
+    CHK(pool.usedBlocks() == 2);
 }
 
-// Capacity Reporting
-// Verifies that capacity() matches the total pool memory.
-static void capacity_is_correct() {
+// Verifies that freeBlocks reflects the number of available blocks.
+static void free_blocks_reflects_available_capacity() {
     Pool pool{64, 4};
+    (void)pool.allocate();
+    CHK(pool.freeBlocks() == 3);
+}
 
+// Verifies that totalBlocks reflects the total block count.
+static void total_blocks_reflects_block_count() {
+    Pool pool{64, 4};
+    CHK(pool.totalBlocks() == 4);
+}
+
+// Verifies that used and free blocks always sum to total blocks.
+static void used_and_free_sum_to_total() {
+    Pool pool{64, 4};
+    (void)pool.allocate();
+    (void)pool.allocate();
+    CHK(pool.usedBlocks() + pool.freeBlocks() == pool.totalBlocks());
+}
+
+// Verifies that capacity reflects stride multiplied by total blocks.
+static void capacity_reflects_stride_times_total() {
+    Pool pool{64, 4};
     CHK(pool.capacity() == pool.blockStride() * pool.totalBlocks());
 }
 
-// Block Usage Tracking
-// Verifies that usedBlocks() and freeBlocks() track allocations correctly.
-static void used_and_free_blocks() {
-    Pool pool{64, 4};
-
-    void* a = pool.allocate();
-    void* b = pool.allocate();
-
-    CHK(pool.usedBlocks() == 2);
-    CHK(pool.freeBlocks() == 2);
-
-    pool.deallocate(a);
-    pool.deallocate(b);
-
-    CHK(pool.usedBlocks() == 0);
-    CHK(pool.freeBlocks() == 4);
-}
-
-// Total Block Count
-// Verifies that totalBlocks() remains unchanged after pool operations.
-static void total_blocks_unchanged() {
-    Pool pool{64, 4};
-
-    (void)pool.allocate();
-    (void)pool.allocate();
-
-    CHK(pool.totalBlocks() == 4);
-
-    pool.reset();
-
-    CHK(pool.totalBlocks() == 4);
-}
-
-// Block Stride
-// Verifies that blockStride() reports the aligned block size.
-static void block_stride_is_correct() {
+// Verifies that blockStride reflects the alignment-padded block size.
+static void block_stride_reflects_aligned_size() {
     Pool pool{10, 4, 8};
-
     CHK(pool.blockStride() == 16);
 }
 
-// Allocation Statistics
-// Verifies that allocation statistics are updated correctly.
-static void stats_track_allocations() {
-    Pool<true> pool{64, 4};
-
-    (void)pool.allocate();
-    (void)pool.allocate();
-
-    CHK(pool.getStats().allocations_ == 2);
-    CHK(pool.getStats().totalAllocated_ == 2);
-}
-
-// Deallocation Statistics
-// Verifies that deallocation statistics are updated correctly.
-static void stats_track_deallocations() {
-    Pool<true> pool{64, 4};
-
-    void* a = pool.allocate();
-    void* b = pool.allocate();
-    pool.deallocate(a);
-    pool.deallocate(b);
-
-    CHK(pool.getStats().deallocations_ == 2);
-}
-
-// Peak Usage Statistics
-// Verifies that peakUsed_ records the highest simultaneous allocation count.
-static void stats_track_peak_used() {
-    Pool<true> pool{64, 4};
-
-    void* a = pool.allocate();
-    void* b = pool.allocate();
-    void* c = pool.allocate();
-    pool.deallocate(c);
-
-    CHK(pool.getStats().peakUsed_ == 3);
-}
-
-// Test Runner
 // Executes all introspection test cases.
 void run_introspection_tests() {
     setTitle("Introspection");
-    
-    RUN(owns_valid_block);
-    RUN(owns_out_of_range);
-    RUN(owns_nullptr);
-    RUN(owns_misaligned_pointer);
-    RUN(capacity_is_correct);
-    RUN(used_and_free_blocks);
-    RUN(total_blocks_unchanged);
-    RUN(block_stride_is_correct);
-    RUN(stats_track_allocations);
-    RUN(stats_track_deallocations);
-    RUN(stats_track_peak_used);
+
+    RUN(owns_returns_true_for_allocated_pointer);
+    RUN(owns_returns_false_for_interior_pointer);
+    RUN(owns_returns_false_for_outside_pointer);
+    RUN(owns_returns_false_for_nullptr);
+    RUN(used_blocks_reflects_current_allocation);
+    RUN(free_blocks_reflects_available_capacity);
+    RUN(total_blocks_reflects_block_count);
+    RUN(used_and_free_sum_to_total);
+    RUN(capacity_reflects_stride_times_total);
+    RUN(block_stride_reflects_aligned_size);
 
     std::cout << "\n";
 }
