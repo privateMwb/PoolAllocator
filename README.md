@@ -1,4 +1,4 @@
-# PoolAllocator
+# Pool Allocator
 
 [![C++23](https://img.shields.io/badge/C%2B%2B-23-blue)](https://en.cppreference.com/w/cpp/23)
 [![Status](https://img.shields.io/badge/status-learning%20project-green)](https://github.com/privateMwb/PoolAllocator)
