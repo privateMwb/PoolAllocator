@@ -1,0 +1,53 @@
+// Bench Reset
+// Measures the cost of pool reset against manual deallocation
+// and equivalent heap deallocation.
+//
+// Covers:
+// - Pool reset vs manual deallocation
+// - Pool reset vs heap deallocation
+
+#include <common/framework.h>
+#include <reference/baseline.h>
+
+using namespace AllocatorPro;
+
+static constexpr std::size_t kResetPoolSize = 256;
+
+// Measures the cost of resetting the pool versus manually deallocating all allocated blocks.
+static void bench_reset() {
+    Pool pool{sizeof(Block), kResetPoolSize};
+    void* blocks[kResetPoolSize]{};
+
+    auto pool_reset = [&] {
+        (void)pool.allocateBatch(blocks);
+        doNotOptimize();
+        pool.reset();
+        doNotOptimize();
+    };
+    BENCH("pool_reset", LARGE, pool_reset);
+
+    auto pool_manual_deallocate = [&] {
+        (void)pool.allocateBatch(blocks);
+        doNotOptimize();
+        pool.deallocateBatch(blocks);
+        doNotOptimize();
+    };
+    BENCH("pool_manual_deallocate", LARGE, pool_manual_deallocate);
+
+    auto heap_reset = [&] {
+        for (std::size_t i = 0; i < kResetPoolSize; ++i)
+            blocks[i] = ::operator new(sizeof(Block));
+        doNotOptimize();
+        for (std::size_t i = 0; i < kResetPoolSize; ++i)
+            ::operator delete(blocks[i]);
+        doNotOptimize();
+    };
+    BENCH("heap_reset", LARGE, heap_reset);
+}
+
+// Executes all reset benchmark cases.
+static void run_benchmarks() {
+    bench_reset();
+}
+
+REGISTER_BENCH_SUITE();

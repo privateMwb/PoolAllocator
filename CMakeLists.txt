@@ -1,10 +1,26 @@
+# ============================================================
+# CMakeLists.txt
+# Build configuration for the PoolPro library.
+# ============================================================
+#
+# Sections:
+#   1. C++ Configuration
+#   2. PoolPro Library
+#   3. Tests
+#   4. Benchmarks
+#   5. Examples
+#   6. Installation
+#   7. Packaging
+#
+# ============================================================
+
 cmake_minimum_required(VERSION 3.20)
+
 project(
     PoolPro
     VERSION 1.0.0
     LANGUAGES CXX
 )
-
 
 # ============================================================================
 # C++ Configuration
@@ -14,7 +30,6 @@ project(
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
 
 # ============================================================================
 # PoolPro (Header-only Library)
@@ -42,18 +57,22 @@ target_compile_features(
 # Tests
 # ============================================================================
 
+# Collect all test source files.
+file(GLOB_RECURSE TEST_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp"
+)
+
 # Build the test executable.
 add_executable(
     tests
-    tests/test_all.cpp
-    tests/test_constructor.cpp
-    tests/test_move.cpp
-    tests/test_memory.cpp
-    tests/test_lifecycle.cpp
-    tests/test_state.cpp
-    tests/test_introspection.cpp
-    tests/test_stats.cpp
-    tests/test_edge.cpp
+    ${TEST_SOURCES}
+)
+
+# Allow simple test includes.
+target_include_directories(
+    tests
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/tests
 )
 
 # Link PoolPro to the test executable.
@@ -63,74 +82,63 @@ target_link_libraries(
     PoolPro
 )
 
-
 # ============================================================================
 # Benchmarks
 # ============================================================================
 
+# Collect all benchmark source files.
+file(GLOB_RECURSE BENCH_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/benchmarks/*.cpp"
+)
+
 # Build the benchmark executable.
 add_executable(
     benchmarks
-    benchmarks/bench_all.cpp
-    benchmarks/bench_constructor.cpp
-    benchmarks/bench_allocation.cpp
-    benchmarks/bench_bulk.cpp
-    benchmarks/bench_lifecycle.cpp
-    benchmarks/bench_reset.cpp
-    benchmarks/bench_throughput.cpp
+    ${BENCH_SOURCES}
 )
 
-# Link PoolPro  to the benchmark executable.
+# Allow simple benchmark includes.
+target_include_directories(
+    benchmarks
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/benchmarks
+)
+
+# Link PoolPro to the benchmark executable.
 target_link_libraries(
     benchmarks
     PRIVATE
     PoolPro
 )
-
 
 # ============================================================================
 # Examples
 # ============================================================================
 
-# Build the basic usage example.
-add_executable(
-    example_basic
-    examples/example_basic.cpp
+# Collect all example source files.
+file(GLOB_RECURSE EXAMPLE_SOURCES CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_SOURCE_DIR}/examples/*.cpp"
 )
 
-# Link PoolPro to the basic usage example.
+# Build the example executable.
+add_executable(
+    examples
+    ${EXAMPLE_SOURCES}
+)
+
+# Allow simple example includes.
+target_include_directories(
+    examples
+    PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/examples
+)
+
+# Link PoolPro to the example executable.
 target_link_libraries(
-    example_basic
+    examples
     PRIVATE
     PoolPro
 )
-
-# Build the object lifecycle example.
-add_executable(
-    example_lifecycle
-    examples/example_lifecycle.cpp
-)
-
-# Link PoolPro to the object lifecycle example.
-target_link_libraries(
-    example_lifecycle
-    PRIVATE
-    PoolPro
-)
-
-# Build the statistics example.
-add_executable(
-    example_stats
-    examples/example_stats.cpp
-)
-
-# Link StackPro to the statistics example.
-target_link_libraries(
-    example_stats
-    PRIVATE
-    PoolPro
-)
-
 
 # ============================================================================
 # Installation
@@ -155,7 +163,6 @@ install(
     DIRECTORY include/
     DESTINATION include
 )
-
 
 # ============================================================================
 # Packaging
