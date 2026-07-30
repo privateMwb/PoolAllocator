@@ -19,12 +19,8 @@ namespace {
 struct Widget {
     int id;
     bool* destroyedFlag;
-    Widget(int i, bool* flag) : id(i), destroyedFlag(flag) {
-        *destroyedFlag = false;
-    }
-    ~Widget() {
-        *destroyedFlag = true;
-    }
+    Widget(int i, bool* flag) : id(i), destroyedFlag(flag) { *destroyedFlag = false; }
+    ~Widget() { *destroyedFlag = true; }
 };
 
 } // namespace
@@ -32,7 +28,7 @@ struct Widget {
 // Verifies a create()/destroy() round trip returns the pool to its
 // starting state, with the slot ready for reuse.
 static void create_then_destroy_frees_slot_for_reuse() {
-    Pool<> pool(sizeof(void*), 2);
+    Pool<> pool(sizeof(Widget), 2);
     bool destroyed = false;
 
     Widget* w = pool.create<Widget>(1, &destroyed);
@@ -53,7 +49,7 @@ static void create_then_destroy_frees_slot_for_reuse() {
 // Verifies many rounds of full fill/drain churn leave capacity and free
 // list state untouched between rounds.
 static void repeated_churn_never_leaks_capacity() {
-    Pool<> pool(sizeof(void*), 4);
+    Pool<> pool(sizeof(Widget), 4);
 
     for (int round = 0; round < 10; ++round) {
         Widget* items[4];
@@ -79,7 +75,7 @@ static void repeated_churn_never_leaks_capacity() {
 // Verifies destroying one live object only frees that object's slot,
 // leaving the others untouched.
 static void partial_destroy_frees_only_targeted_slot() {
-    Pool<> pool(sizeof(void*), 3);
+    Pool<> pool(sizeof(Widget), 3);
     bool flagA = false, flagB = false, flagC = false;
 
     Widget* a = pool.create<Widget>(1, &flagA);
