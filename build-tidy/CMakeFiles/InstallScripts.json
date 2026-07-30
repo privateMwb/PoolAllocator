@@ -1,0 +1,8 @@
+{
+	"InstallScripts" : 
+	[
+		"/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/cmake_install.cmake",
+		"/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/tests_build/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

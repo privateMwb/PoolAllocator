@@ -1,0 +1,15 @@
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/CMakeFiles/test.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/CMakeFiles/edit_cache.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/CMakeFiles/rebuild_cache.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/CMakeFiles/list_install_components.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/CMakeFiles/install.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/CMakeFiles/install/local.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/CMakeFiles/install/strip.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/tests_build/CMakeFiles/tests.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/tests_build/CMakeFiles/test.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/tests_build/CMakeFiles/edit_cache.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/tests_build/CMakeFiles/rebuild_cache.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/tests_build/CMakeFiles/list_install_components.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/tests_build/CMakeFiles/install.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/tests_build/CMakeFiles/install/local.dir
+/data/data/com.termux/files/home/projects/C++/AllocatorPro/Pool/build-tidy/tests_build/CMakeFiles/install/strip.dir

@@ -1,53 +1,69 @@
-// Bench Reset
-// Measures the cost of pool reset against manual deallocation
-// and equivalent heap deallocation.
+// PoolPro Core Benchmark Suite — Reset
+// Measures Pool reset() performance against stdPool's release(),
+// the standard library's own pool allocator.
+//
+// Each case starts from a fully allocated pool, so what's measured is
+// genuinely reclaiming a populated pool, not an already-empty one.
 //
 // Covers:
-// - Pool reset vs manual deallocation
-// - Pool reset vs heap deallocation
+// - reset() alone, immediately reclaiming a full pool
+// - reset() followed by refilling to a fixed block count
 
-#include <common/framework.h>
-#include <reference/baseline.h>
+#include <support/framework.h>
 
-using namespace AllocatorPro;
+#include <vector>
 
-static constexpr std::size_t kResetPoolSize = 256;
+using namespace PoolPro;
 
-// Measures the cost of resetting the pool versus manually deallocating all allocated blocks.
-static void bench_reset() {
-    Pool pool{sizeof(Block), kResetPoolSize};
-    void* blocks[kResetPoolSize]{};
+namespace {
+constexpr std::size_t kBlockSize = sizeof(void*);
+constexpr std::size_t kBlockCount = 4096;
+constexpr std::size_t kRefillCount = 1024;
+} // namespace
 
-    auto pool_reset = [&] {
-        (void)pool.allocateBatch(blocks);
-        doNotOptimize();
-        pool.reset();
-        doNotOptimize();
-    };
-    BENCH("pool_reset", LARGE, pool_reset);
+// Measures reset() reclaiming a fully allocated pool, with no refill.
+static void bench_reset_alone() {
+    Pool<false> cSrc(kBlockSize, kBlockCount);
+    std::vector<void*> cScratch(kBlockCount);
+    (void)cSrc.allocateBatch(cScratch);
 
-    auto pool_manual_deallocate = [&] {
-        (void)pool.allocateBatch(blocks);
-        doNotOptimize();
-        pool.deallocateBatch(blocks);
-        doNotOptimize();
-    };
-    BENCH("pool_manual_deallocate", LARGE, pool_manual_deallocate);
+    stdPool sSrc;
+    for (std::size_t i = 0; i < kBlockCount; ++i)
+        (void)sSrc.allocate(kBlockSize);
 
-    auto heap_reset = [&] {
-        for (std::size_t i = 0; i < kResetPoolSize; ++i)
-            blocks[i] = ::operator new(sizeof(Block));
-        doNotOptimize();
-        for (std::size_t i = 0; i < kResetPoolSize; ++i)
-            ::operator delete(blocks[i]);
-        doNotOptimize();
-    };
-    BENCH("heap_reset", LARGE, heap_reset);
+    auto c = [&] { cSrc.reset(); };
+
+    auto s = [&] { sSrc.release(); };
+
+    BENCH("reset()", c, s);
 }
 
-// Executes all reset benchmark cases.
+// Measures reset() followed by refilling to a fixed block count.
+static void bench_reset_refill() {
+    Pool<false> cSrc(kBlockSize, kBlockCount);
+    std::vector<void*> cScratch(kRefillCount);
+
+    stdPool sSrc;
+
+    auto c = [&] {
+        cSrc.reset();
+        (void)cSrc.allocateBatch(cScratch);
+    };
+
+    auto s = [&] {
+        sSrc.release();
+        for (std::size_t i = 0; i < kRefillCount; ++i)
+            (void)sSrc.allocate(kBlockSize);
+    };
+
+    BENCH("reset() + refill", c, s);
+}
+
 static void run_benchmarks() {
-    bench_reset();
+    bench_reset_alone();
+    std::cout << "\n";
+
+    bench_reset_refill();
 }
 
 REGISTER_BENCH_SUITE();

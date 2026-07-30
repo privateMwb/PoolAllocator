@@ -1,0 +1,11 @@
+{
+  "name": "poolpro",
+  "version": "1.0.0",
+  "description": "High-performance, header-only fixed-block pool allocator with O(1) allocate/deallocate/reset, backed by a hybrid free-list and bump-pointer watermark.",
+  "homepage": "https://github.com/privateMwb/PoolAllocator",
+  "license": "MIT",
+  "dependencies": [
+    "vcpkg-cmake",
+    "vcpkg-cmake-config"
+  ]
+}
