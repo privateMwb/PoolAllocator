@@ -45,7 +45,7 @@ static void oversized_request_throws_bad_alloc() {
     // even accounting for the stride possibly rounding blockSize up to
     // the default alignment.
     constexpr std::size_t hugeBlockCount = std::size_t{1} << 33; // ~128 GiB worst case
-    CHK_THROWS(Pool<> pool(sizeof(void*), hugeBlockCount), std::bad_alloc);
+    CHK_THROWS(Pool<>(sizeof(void*), hugeBlockCount), std::bad_alloc);
 }
 
 // Executes all constructor-contract test cases.
