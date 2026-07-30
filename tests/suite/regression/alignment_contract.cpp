@@ -35,7 +35,7 @@ static void large_alignment_is_honored() {
 // must land on an alignment boundary, not just block 0.
 static void every_block_in_pool_honors_alignment() {
     constexpr std::size_t alignment = 32;
-    Pool<> pool(4, 5, alignment);
+    Pool<> pool(sizeof(void*), 5, alignment);
 
     for (int i = 0; i < 5; ++i) {
         void* p = pool.allocate();

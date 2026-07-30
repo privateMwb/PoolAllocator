@@ -19,8 +19,12 @@ namespace {
 struct Widget {
     int id;
     bool* destroyedFlag;
-    Widget(int i, bool* flag) : id(i), destroyedFlag(flag) { *destroyedFlag = false; }
-    ~Widget() { *destroyedFlag = true; }
+    Widget(int i, bool* flag) : id(i), destroyedFlag(flag) {
+        *destroyedFlag = false;
+    }
+    ~Widget() {
+        *destroyedFlag = true;
+    }
 };
 
 } // namespace
