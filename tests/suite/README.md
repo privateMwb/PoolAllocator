@@ -68,7 +68,7 @@ resolved issue or pinned contract, added at the time it's settled.
 
 ### Tests
 
-- `ctor_precondition_order.cpp` — The backing allocation happens in the member-init list before AP_PRE runs in the ctor body; an unsatisfiable request still throws std::bad_alloc rather than being caught by a check
+- `ctor_precondition_order.cpp` — Pins correct behavior at the exact boundary each constructor precondition allows (minimum blockCount, minimum blockSize), guarding against an off-by-one if a check is ever tightened
 - `alignment_contract.cpp` — The smallest (1) and a large power-of-two alignment are honored by every block in the pool, not just the first
 - `double_free_assert.cpp` — Legitimate reuse and consecutive frees of distinct blocks never false-positive against the immediate-double-free AP_ASSERT
 
