@@ -39,8 +39,13 @@ static void minimum_valid_block_size_succeeds() {
 // system's address space throws std::bad_alloc instead of silently
 // succeeding or being intercepted by a check.
 static void oversized_request_throws_bad_alloc() {
-    constexpr std::size_t hugeBlockCount = std::size_t{1} << 50; // ~8 PB total
-    CHK_THROWS(Pool<>(sizeof(void*), hugeBlockCount), std::bad_alloc);
+    // Sized to land comfortably under sanitizer allocation-size caps
+    // (e.g. ASan aborts outright, rather than throwing, above ~1 TiB)
+    // while still being far larger than any real system can satisfy —
+    // even accounting for the stride possibly rounding blockSize up to
+    // the default alignment.
+    constexpr std::size_t hugeBlockCount = std::size_t{1} << 33; // ~128 GiB worst case
+    CHK_THROWS(Pool<> pool(sizeof(void*), hugeBlockCount), std::bad_alloc);
 }
 
 // Executes all constructor-contract test cases.
