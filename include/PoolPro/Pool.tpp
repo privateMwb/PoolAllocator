@@ -358,8 +358,3 @@ constexpr void Pool<EnableStats>::statDealloc(std::size_t count) noexcept {
 }
 
 } // namespace PoolPro
-
-/// @brief Short alias so this library can be used as `rain::Pool`, while its
-/// true namespace (and all internal diagnostics) remains `PoolPro`.
-/// See Pool.h for the same alias applied to the header.
-namespace rain = PoolPro;

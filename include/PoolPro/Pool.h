@@ -318,9 +318,18 @@ template <bool EnableStats = false> class Pool {
 
 } // namespace PoolPro
 
-/// @brief Short alias so this library can be used as `rain::Pool`, while its
-/// true namespace (and all internal diagnostics) remains `PoolPro`.
-/// See Contract.h and Pool.tpp for the same alias applied there.
-namespace rain = PoolPro;
+/// @brief Umbrella alias so this library's types are reachable as
+/// `rain::Pool`, alongside every other project library, while its true
+/// namespace (and all internal diagnostics) remains `PoolPro`. Reopens
+/// `rain` rather than aliasing it, since multiple libraries each contribute
+/// their own names into the same `rain` namespace -- an alias
+/// (`namespace rain = PoolPro;`) can only ever bind to one target and
+/// collides the moment a second library declares its own `rain` alias to
+/// something else. Declared here only: Pool.tpp is included directly by
+/// this header (not a separate entry point), and Contract.h is included
+/// directly by this header too, so both are already reachable through it.
+namespace rain {
+using namespace PoolPro;
+}
 
 #include "Pool.tpp"
