@@ -1,12 +1,16 @@
 /**
- * @file Contract.h
- * @brief Contract macros and compiler attributes shared across PoolPro.
+ * @file            Contract.h
+ * @date            2026-29-7
  *
- * Contains the AP_PRE/AP_POST/AP_INVARIANT/AP_ASSERT contract macros, the
- * AP_PURE attribute, and the AP_PREFETCH software-prefetch hint used
- * throughout PoolPro. By default the contract macros all expand to
- * `assert()`, so they are checked in debug builds and compiled out
- * entirely when `NDEBUG` is defined.
+ * @version         1.0.0
+ *
+ * @copyright       Copyright (c) 2026 privateMwb
+ *                  All rights reserved.
+ *                  https://github.com/privateMwb/PoolPro
+ *
+ * @attention       This source is released under the MIT license
+ *                  SPDX-License-Identifier: MIT
+ *                  <http://opensource.org/licenses/MIT>
  */
 
 #pragma once
