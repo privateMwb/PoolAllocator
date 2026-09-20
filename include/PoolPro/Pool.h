@@ -4,7 +4,7 @@
  *
  * @version         1.0.0
  *
- * @copyright       Copyright (c) 2026 MWB
+ * @copyright       Copyright (c) 2026 privateMwb
  *                  All rights reserved.
  *                  https://github.com/privateMwb/PoolPro
  *
