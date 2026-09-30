@@ -27,7 +27,7 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
       - name: Initialize CodeQL
-        uses: github/codeql-action/init@2892aa5e8d5a5e5f2b0a8f0b6f8b0f4f2b5c7c0a # v4.38.2
+        uses: github/codeql-action/init@v4.38.2
         with:
           languages: cpp
           # security-extended pulls in additional query packs beyond
@@ -53,6 +53,6 @@ jobs:
           cmake --build build --parallel
 
       - name: Perform CodeQL analysis
-        uses: github/codeql-action/analyze@2892aa5e8d5a5e5f2b0a8f0b6f8b0f4f2b5c7c0a # v4.38.2
+        uses: github/codeql-action/analyze@v4.38.2
         with:
           category: "/language:cpp"
