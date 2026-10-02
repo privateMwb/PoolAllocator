@@ -3,7 +3,7 @@
 # Base image for building the fuzz harnesses under ClusterFuzzLite.
 # ============================================================
 
-FROM gcr.io/oss-fuzz-base/base-builder@sha256:23f294580c94a53c1625f5b98c7c22d7155fb030b877d0c2f937fbc8156b5aca
+FROM gcr.io/oss-fuzz-base/base-builder@sha256:e67da2b0f6156b29b62734305a8c74db61aaf3158c7ab96386a07974fb33cdc8
 
 COPY . $SRC/PoolAllocator
 COPY .clusterfuzzlite/build.sh $SRC/
